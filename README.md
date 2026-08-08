@@ -1,4 +1,8 @@
 # FitMode — LeetCode of Fitness
+https://fitmode-git-main-labhesh-1gits-projects.vercel.app/
+Youtube Link below showing working:
+https://youtu.be/O4BAi190sBQ
+
 
 FitMode is a full-stack fitness tracking platform inspired by LeetCode and modern gym apps. The idea was to make fitness feel like a gamified coding platform where users complete daily challenges, earn XP, maintain streaks, and track long-term progress through analytics and a GitHub-style heatmap.
 
