@@ -1,5 +1,6 @@
 # FitMode — LeetCode of Fitness
-https://fitmode-git-main-labhesh-1gits-projects.vercel.app/
+https://fitmode-sigma.vercel.app/
+
 Youtube Link below showing working:
 https://youtu.be/O4BAi190sBQ
 
