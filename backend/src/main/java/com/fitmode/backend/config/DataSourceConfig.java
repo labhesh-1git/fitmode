@@ -20,6 +20,10 @@ public class DataSourceConfig {
         String password = System.getenv("MYSQLPASSWORD");
 
         if (mysqlUrl != null && !mysqlUrl.isEmpty()) {
+            if (mysqlUrl.contains(".internal")) {
+                throw new RuntimeException("CRITICAL ERROR: You are using Railway's private connection URL (contains '.internal') on Render. Render is outside Railway and MUST connect using Railway's public connection URL (e.g., mysql://root:password@junction.proxy.rlwy.net:12345/railway). Please update the MYSQL_URL variable in your Render dashboard!");
+            }
+
             // Convert mysql:// to jdbc:mysql://
             if (mysqlUrl.startsWith("mysql://")) {
                 jdbcUrl = "jdbc:" + mysqlUrl;
@@ -44,7 +48,13 @@ public class DataSourceConfig {
                 }
             }
         } else {
-            String host = System.getenv("MYSQLHOST") != null ? System.getenv("MYSQLHOST") : "localhost";
+            String host = System.getenv("MYSQLHOST");
+            if (host != null && host.contains(".internal")) {
+                throw new RuntimeException("CRITICAL ERROR: You are using Railway's private host ('mysql.railway.internal') on Render. Render is outside Railway and MUST connect using Railway's public host (e.g., 'junction.proxy.rlwy.net'). Please update the MYSQLHOST variable in your Render dashboard!");
+            }
+            if (host == null || host.isEmpty()) {
+                host = "localhost";
+            }
             String port = System.getenv("MYSQLPORT") != null ? System.getenv("MYSQLPORT") : "3306";
             String db = System.getenv("MYSQLDATABASE") != null ? System.getenv("MYSQLDATABASE") : "fitmode";
             jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + db;
