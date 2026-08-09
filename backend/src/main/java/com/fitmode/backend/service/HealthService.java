@@ -70,9 +70,19 @@ public class HealthService {
 
     // Get today's record
     public HealthRecord getTodayRecord(Long userId) {
-        return healthRecordRepository
+        HealthRecord todayRecord = healthRecordRepository
                 .findByUserIdAndDate(userId, LocalDate.now())
                 .orElse(null);
+        if (todayRecord != null) {
+            return todayRecord;
+        }
+        
+        // Fallback to the latest record from history so dashboard displays newly submitted check-in data
+        List<HealthRecord> history = healthRecordRepository.findByUserIdOrderByDateDesc(userId);
+        if (!history.isEmpty()) {
+            return history.get(0);
+        }
+        return null;
     }
 
     // Get full history

@@ -16,4 +16,8 @@ public class ChallengeService {
     public List<Challenge> getAllChallenges() {
         return challengeRepository.findAll();
     }
+
+    public Challenge saveChallenge(Challenge challenge) {
+        return challengeRepository.save(challenge);
+    }
 }

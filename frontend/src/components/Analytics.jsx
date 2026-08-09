@@ -29,6 +29,7 @@ function Analytics({ userId }) {
     water: [],
     steps: [],
     calories: [],
+    dates: [],
   });
 
   useEffect(() => {
@@ -41,7 +42,9 @@ function Analytics({ userId }) {
       });
   }, [userId]);
 
-  const labels = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Today"];
+  const labels = analytics.dates && analytics.dates.length > 0 
+    ? analytics.dates 
+    : ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Today"];
 
   const options = {
     responsive: true,

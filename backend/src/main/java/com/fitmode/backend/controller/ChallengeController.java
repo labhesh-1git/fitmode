@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/challenges")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ChallengeController {
 
     @Autowired
@@ -18,5 +17,10 @@ public class ChallengeController {
     @GetMapping
     public List<Challenge> getChallenges() {
         return challengeService.getAllChallenges();
+    }
+
+    @PostMapping
+    public Challenge addChallenge(@RequestBody Challenge challenge) {
+        return challengeService.saveChallenge(challenge);
     }
 }

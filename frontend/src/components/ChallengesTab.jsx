@@ -3,6 +3,37 @@ import API from "../api";
 
 export default function ChallengesTab({ challenges, health, setChallenges, setHealthData, userId }) {
   const [celebratingId, setCelebratingId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [newType, setNewType] = useState("STEPS");
+  const [newTarget, setNewTarget] = useState(5000);
+  const [newDifficulty, setNewDifficulty] = useState("Easy");
+
+  const handleAddChallenge = async (e) => {
+    e.preventDefault();
+    let rewardXp = 10;
+    if (newDifficulty === "Medium") rewardXp = 20;
+    if (newDifficulty === "Elite") rewardXp = 30;
+
+    try {
+      const res = await API.post("/challenges", {
+        title: newTitle,
+        description: newDesc,
+        type: newType,
+        target: Number(newTarget),
+        rewardXp
+      });
+      if (setChallenges) {
+        setChallenges((prev) => [...prev, res.data]);
+      }
+      setShowForm(false);
+      setNewTitle("");
+      setNewDesc("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const getChallengeStats = (challenge) => {
     let progress = 0;
@@ -159,6 +190,97 @@ export default function ChallengesTab({ challenges, health, setChallenges, setHe
               : 0}%
           </div>
         </div>
+      </div>
+
+      {/* Challenge Creation form */}
+      <div className="bg-[#0b0f19] border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h2 className="text-xl font-black text-white uppercase tracking-wider">Custom Training Missions</h2>
+            <p className="text-slate-400 text-xs mt-1">Design and append custom fitness routines to your active session.</p>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center justify-center gap-2 bg-red-650 hover:bg-red-700 text-white font-bold px-5 py-3 rounded-xl transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(239,68,68,0.2)] text-xs uppercase tracking-wider self-start sm:self-auto"
+          >
+            {showForm ? "✕ Close Form" : "＋ Create Mission"}
+          </button>
+        </div>
+
+        {showForm && (
+          <form onSubmit={handleAddChallenge} className="pt-4 border-t border-slate-850 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="sm:col-span-2 md:col-span-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Mission Title</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Squat Burnout"
+                className="w-full bg-[#020617] border border-slate-855 p-3 rounded-lg text-slate-250 focus:outline-none focus:border-red-500 transition-colors"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
+            </div>
+
+            <div className="sm:col-span-2 md:col-span-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Mission Description</label>
+              <textarea
+                required
+                placeholder="e.g. Perform 50 deep bodyweight squats with controlled form."
+                className="w-full bg-[#020617] border border-slate-855 p-3 rounded-lg text-slate-250 focus:outline-none focus:border-red-500 transition-colors h-20 resize-none"
+                value={newDesc}
+                onChange={(e) => setNewDesc(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Mission Type</label>
+              <select
+                className="w-full bg-[#020617] border border-slate-855 p-3 rounded-lg text-slate-250 focus:outline-none focus:border-red-500 transition-colors"
+                value={newType}
+                onChange={(e) => setNewType(e.target.value)}
+              >
+                <option value="STEPS">STEPS</option>
+                <option value="WATER">WATER</option>
+                <option value="CALORIES">CALORIES</option>
+                <option value="WEIGHT">WEIGHT</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Target Value</label>
+              <input
+                type="number"
+                required
+                min="1"
+                className="w-full bg-[#020617] border border-slate-855 p-3 rounded-lg text-slate-250 focus:outline-none focus:border-red-500 transition-colors"
+                value={newTarget}
+                onChange={(e) => setNewTarget(Number(e.target.value))}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Difficulty</label>
+              <select
+                className="w-full bg-[#020617] border border-slate-855 p-3 rounded-lg text-slate-250 focus:outline-none focus:border-red-500 transition-colors"
+                value={newDifficulty}
+                onChange={(e) => setNewDifficulty(e.target.value)}
+              >
+                <option value="Easy">Easy (+10 XP)</option>
+                <option value="Medium">Medium (+20 XP)</option>
+                <option value="Elite">Elite (+30 XP)</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-2 md:col-span-3 flex justify-end">
+              <button
+                type="submit"
+                className="bg-red-650 hover:bg-red-700 text-white font-bold px-6 py-4 rounded-xl transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(239,68,68,0.25)] text-xs uppercase tracking-wider w-full sm:w-auto"
+              >
+                ＋ Append to Training Missions
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       {/* Dynamic Visual splits by Categories */}

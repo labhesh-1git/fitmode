@@ -12,7 +12,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/analytics")
-@CrossOrigin
 public class AnalyticsController {
 
 
@@ -33,24 +32,27 @@ public class AnalyticsController {
         List<HealthRecord> logs =
                 repository.findByUserIdOrderByDateDesc(userId);
 
-
+        // Get the latest 8 logs
+        if (logs.size() > 8) {
+            logs = logs.subList(0, 8);
+        }
+        // Reverse them to be in chronological order (oldest to newest)
+        Collections.reverse(logs);
 
         List<Double> weight = new ArrayList<>();
         List<Double> water = new ArrayList<>();
         List<Integer> steps = new ArrayList<>();
         List<Integer> calories = new ArrayList<>();
-
+        List<String> dates = new ArrayList<>();
 
         for(HealthRecord log : logs){
-
             weight.add(log.getWeight());
             water.add(log.getWaterIntake());
             steps.add(log.getSteps());
             calories.add(log.getCaloriesBurned());
-
+            // Format date as MM-dd
+            dates.add(log.getDate().getMonthValue() + "-" + log.getDate().getDayOfMonth());
         }
-
-
 
         Map<String,Object> response = new HashMap<>();
 
@@ -58,7 +60,7 @@ public class AnalyticsController {
         response.put("water", water);
         response.put("steps", steps);
         response.put("calories", calories);
-
+        response.put("dates", dates);
 
         return response;
 

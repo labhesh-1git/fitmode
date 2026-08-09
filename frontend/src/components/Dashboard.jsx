@@ -10,7 +10,17 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
       .catch((err) => console.error(err));
   }, [userId, healthData]);
 
-  if (!healthData || !user) {
+  const activeHealthData = healthData && typeof healthData === 'object' && !Array.isArray(healthData) ? healthData : {
+    weight: 70,
+    waterIntake: 0,
+    steps: 0,
+    caloriesBurned: 0,
+    workoutCompleted: false,
+    energyLevel: "Normal",
+    bmi: 22.4
+  };
+
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-red-550"></div>
@@ -125,19 +135,19 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
               <div>
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Body Weight</span>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-3xl font-extrabold text-slate-100">{healthData.weight || 70} kg</span>
+                  <span className="text-3xl font-extrabold text-slate-100">{activeHealthData.weight || 70} kg</span>
                   <div className="flex gap-1.5">
                     <button 
                       onClick={async () => {
                         try {
                           const res = await API.post("/checkin", {
                             userId,
-                            waterIntake: healthData.waterIntake,
-                            steps: healthData.steps,
-                            weight: (healthData.weight || 70) - 0.5,
-                            workoutCompleted: healthData.workoutCompleted || false,
-                            energyLevel: healthData.energyLevel || "Normal",
-                            caloriesBurned: healthData.caloriesBurned
+                            waterIntake: activeHealthData.waterIntake,
+                            steps: activeHealthData.steps,
+                            weight: (activeHealthData.weight || 70) - 0.5,
+                            workoutCompleted: activeHealthData.workoutCompleted || false,
+                            energyLevel: activeHealthData.energyLevel || "Normal",
+                            caloriesBurned: activeHealthData.caloriesBurned
                           });
                           setHealthData(res.data);
                         } catch (err) {
@@ -153,12 +163,12 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
                         try {
                           const res = await API.post("/checkin", {
                             userId,
-                            waterIntake: healthData.waterIntake,
-                            steps: healthData.steps,
-                            weight: (healthData.weight || 70) + 0.5,
-                            workoutCompleted: healthData.workoutCompleted || false,
-                            energyLevel: healthData.energyLevel || "Normal",
-                            caloriesBurned: healthData.caloriesBurned
+                            waterIntake: activeHealthData.waterIntake,
+                            steps: activeHealthData.steps,
+                            weight: (activeHealthData.weight || 70) + 0.5,
+                            workoutCompleted: activeHealthData.workoutCompleted || false,
+                            energyLevel: activeHealthData.energyLevel || "Normal",
+                            caloriesBurned: activeHealthData.caloriesBurned
                           });
                           setHealthData(res.data);
                         } catch (err) {
@@ -181,18 +191,18 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
               <div>
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Water Intake</span>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-3xl font-extrabold text-slate-100">{healthData.waterIntake} L</span>
+                  <span className="text-3xl font-extrabold text-slate-100">{activeHealthData.waterIntake} L</span>
                   <button 
                     onClick={async () => {
                       try {
-                        const newWater = Number((healthData.waterIntake + 0.25).toFixed(2));
+                        const newWater = Number((activeHealthData.waterIntake + 0.25).toFixed(2));
                         const res = await API.post("/checkin", {
                           userId,
                           waterIntake: newWater,
-                          steps: healthData.steps,
-                          weight: healthData.weight || 70,
-                          workoutCompleted: healthData.workoutCompleted || false,
-                          energyLevel: healthData.energyLevel || "Normal"
+                          steps: activeHealthData.steps,
+                          weight: activeHealthData.weight || 70,
+                          workoutCompleted: activeHealthData.workoutCompleted || false,
+                          energyLevel: activeHealthData.energyLevel || "Normal"
                         });
                         setHealthData(res.data);
                       } catch (err) {
@@ -214,17 +224,17 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
               <div>
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Steps Walked</span>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-3xl font-extrabold text-slate-100">{healthData.steps} / 10k</span>
+                  <span className="text-3xl font-extrabold text-slate-100">{activeHealthData.steps} / 10k</span>
                   <button 
                     onClick={async () => {
                       try {
                         const res = await API.post("/checkin", {
                           userId,
-                          waterIntake: healthData.waterIntake,
-                          steps: healthData.steps + 1000,
-                          weight: healthData.weight || 70,
-                          workoutCompleted: healthData.workoutCompleted || false,
-                          energyLevel: healthData.energyLevel || "Normal"
+                          waterIntake: activeHealthData.waterIntake,
+                          steps: activeHealthData.steps + 1000,
+                          weight: activeHealthData.weight || 70,
+                          workoutCompleted: activeHealthData.workoutCompleted || false,
+                          energyLevel: activeHealthData.energyLevel || "Normal"
                         });
                         setHealthData(res.data);
                       } catch (err) {
@@ -246,18 +256,18 @@ function Dashboard({ userId, healthData, setHealthData, challenges, leaderboard 
               <div>
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Calories Burned</span>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-3xl font-extrabold text-slate-100">{healthData.caloriesBurned} kcal</span>
+                  <span className="text-3xl font-extrabold text-slate-100">{activeHealthData.caloriesBurned} kcal</span>
                   <button 
                     onClick={async () => {
                       try {
                         const res = await API.post("/checkin", {
                           userId,
-                          waterIntake: healthData.waterIntake,
-                          steps: healthData.steps,
-                          weight: healthData.weight || 70,
-                          workoutCompleted: healthData.workoutCompleted || false,
-                          energyLevel: healthData.energyLevel || "Normal",
-                          caloriesBurned: (healthData.caloriesBurned || 0) + 100
+                          waterIntake: activeHealthData.waterIntake,
+                          steps: activeHealthData.steps,
+                          weight: activeHealthData.weight || 70,
+                          workoutCompleted: activeHealthData.workoutCompleted || false,
+                          energyLevel: activeHealthData.energyLevel || "Normal",
+                          caloriesBurned: (activeHealthData.caloriesBurned || 0) + 100
                         });
                         setHealthData(res.data);
                       } catch (err) {

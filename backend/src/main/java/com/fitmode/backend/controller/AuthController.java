@@ -10,7 +10,6 @@ import com.fitmode.backend.dto.LoginResponse;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     @Autowired

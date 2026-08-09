@@ -21,7 +21,7 @@ public class CheckInService {
     @Autowired
     private com.fitmode.backend.repository.HealthRecordRepository healthRecordRepository;
 
-    public String saveCheckIn(DailyCheckIn checkIn) {
+    public com.fitmode.backend.entity.HealthRecord saveCheckIn(DailyCheckIn checkIn) {
 
         User user = userRepository.findById(checkIn.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -69,7 +69,7 @@ public class CheckInService {
         double bmi = checkIn.getWeight() / (heightInMeters * heightInMeters);
         healthRecord.setBmi(Math.round(bmi * 10.0) / 10.0);
 
-        healthRecordRepository.save(healthRecord);
+        com.fitmode.backend.entity.HealthRecord savedRecord = healthRecordRepository.save(healthRecord);
 
         user.setLastCheckInDate(targetDate);
 
@@ -83,6 +83,6 @@ public class CheckInService {
 
         userRepository.save(user);
 
-        return "Check-in completed successfully";
+        return savedRecord;
     }
 }
